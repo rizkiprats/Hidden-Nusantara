@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/ICESplash.unity
+    guid: ea5be366972df3741babae9a37e091e0
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/SplashScreen.unity
+    guid: 9937efa63d9b6da42b09bde843f3a9ee
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/MainMenu.unity
+    guid: f3a0e8b739ad8cb4f8d6b4e2401b4d0a
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/Level-1.unity
+    guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/Level-2.unity
+    guid: 8d291e7afe3b2294d998b2deee578b87
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/Level-3.unity
+    guid: 58d7898f7aa38a142918af36f5dcad62
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/Level-4.unity
+    guid: 53a1b611ac91d144ba074c6785ea2dcd
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/Level-5.unity
+    guid: b9e3dd31c03620447b90e16361bcfc72
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/Level-6.unity
+    guid: bdecf242dbafae84aae674bc04f3ec2f
+  - enabled: 1
+    path: Assets/Hidden_Nusantara/Scenes/CreditScene.unity
+    guid: f5984220b6ba2c54fab9866c5ff7bb57
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 500c57d593e22154098226d3f09689c1, type: 2}
