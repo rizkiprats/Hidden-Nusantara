@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 3316.363, y: 1243.6627, z: -239.36658}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -44,3 +45,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileName: data.game
+  gameDataSave:
+    timerSaved: 60
+    playerPositionSaved: {x: 0, y: 0, z: 0}
+    sceneNumberSaved: 0
+    isOn_PressurePlateSaved: 0
+    doorOpenSaved: 0
+    isFollowing_KeySaved: 0
+    boxPressurePlate_PosSaved: []
+    plate_PosSaved: {x: 0, y: 0, z: 0}
+    JurnalItem_EnabledSaved: 000000
+    levelProgressSaved:
+      Level_Progress:
+      - PointProgress: 
+    Obtained_Object_Count_Saved: 0
+    cameraPos: {x: 0, y: 0, z: 0}

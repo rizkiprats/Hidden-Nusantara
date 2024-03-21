@@ -8,9 +8,10 @@ using System.IO;
 public class DataSaveManager : MonoBehaviour
 {
     [Header("File Storage Config")]
-    [SerializeField] private string fileName;
+    [SerializeField] private string fileName = "SaveGame.sav";
 
-    private GameDataSave gameDataSave;
+    [Header("File Data Saved Properties")]
+    public GameDataSave gameDataSave;
 
     private List<InterfaceDataSave> dataSaveObjects;
 
@@ -39,6 +40,11 @@ public class DataSaveManager : MonoBehaviour
         this.gameDataSave = new GameDataSave();
     }
 
+    public void CreateNewSaveData()
+    {
+        this.gameDataSave = new GameDataSave();
+    }
+
     public void LoadGame()
     {
 
@@ -47,17 +53,14 @@ public class DataSaveManager : MonoBehaviour
         if(this.gameDataSave == null)
         {
             Debug.Log("No data was found. A New Game needs to be started before data can be loaded");
-            //NewGame();
         }
 
         foreach (InterfaceDataSave dataSaveObj in dataSaveObjects)
         {
             dataSaveObj.LoadData(gameDataSave);
         }
-        //Debug.Log("Loaded timer = " + gameDataSave.timer);
+
         Debug.Log("Game Loaded");
-
-
     }
 
     public void SaveGame()
@@ -66,7 +69,7 @@ public class DataSaveManager : MonoBehaviour
         if (this.gameDataSave == null)
         {
             Debug.Log("No data was found. A New Game needs to be started before data can be loaded");
-            return;
+            NewGame();
         }
 
         foreach (InterfaceDataSave dataSaveObj in dataSaveObjects)
@@ -74,34 +77,28 @@ public class DataSaveManager : MonoBehaviour
             dataSaveObj.SaveData(ref gameDataSave);
             
         }
-        //Debug.Log("Saved timer = " + gameDataSave.timer);
 
         dataHandler.Save(gameDataSave);
 
         Debug.Log("Game Saved");
-
     }
 
     public void DeleteSaveGame()
     {
-        SceneManager.LoadScene(0);
-        
-
-
+        dataHandler.Delete();
+        Debug.Log("Save Data Has Removed");
     }
 
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnSceneLoaded;
         SceneManager.sceneUnloaded += OnSceneUnLoaded;
-
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;
         SceneManager.sceneUnloaded -= OnSceneUnLoaded;
-
     }
 
     public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -114,14 +111,7 @@ public class DataSaveManager : MonoBehaviour
     public void OnSceneUnLoaded(Scene scene)
     {
         Debug.Log("OnScene UnLoaded Called");
-        SaveGame();
-    }
-
-    private void Start()
-    {
-        //this.dataSaveObjects = FindAllDataSaveObjects();
-        //LoadGame();
-
+        //SaveGame();
     }
 
     private void OnApplicationQuit()
@@ -139,5 +129,4 @@ public class DataSaveManager : MonoBehaviour
     {
         return gameDataSave != null;
     }
-
 }

@@ -9,6 +9,13 @@ TagManager:
   - Box
   - PresurePlate
   - Tangga
+  - Level
+  - GameManager_Default
+  - TanggaInteract
+  - Ground Special
+  - FadeOut
+  - Blockade
+  - JournalTexts
   layers:
   - Default
   - TransparentFX
@@ -16,8 +23,8 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
+  - Tangga
+  - TanggaInteract
   - 
   - 
   - 
@@ -47,5 +54,8 @@ TagManager:
     uniqueID: 0
     locked: 0
   - name: Ground
-    uniqueID: 2787995227
+    uniqueID: 1806420255
+    locked: 0
+  - name: Environtment
+    uniqueID: 697842961
     locked: 0

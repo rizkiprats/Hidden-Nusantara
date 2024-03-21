@@ -5,6 +5,7 @@ using UnityEngine.Advertisements;
 
 public class Sdk : MonoBehaviour, IUnityAdsInitializationListener
 {
+    [Header("Unity Ads Service ID")]
     [SerializeField] string _androidGameId;
     [SerializeField] string _iOSGameId;
     [SerializeField] bool _testMode = true;

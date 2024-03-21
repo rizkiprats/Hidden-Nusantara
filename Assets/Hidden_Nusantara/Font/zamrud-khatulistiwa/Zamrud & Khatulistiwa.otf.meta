@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: bfb95ce3971e7a741836fec463307916
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Zamrud & Khatulistiwa
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 7630195bba8015d4084b34a1c225ff40, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -4,10 +4,16 @@ using UnityEngine.Advertisements;
 
 public class Rewarded : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListener
 {
+    [Header("Button To Show Rewarded Ads")]
     [SerializeField] Button _showAdButton;
+
+    [Header("Unity Ads Service Name")]
     [SerializeField] string _androidAdUnitId = "Rewarded_Android";
     [SerializeField] string _iOSAdUnitId = "Rewarded_iOS";
+
+    [Header("Reward After The Ads")]
     public float addedtime;
+
     string _adUnitId = null; // This will remain null for unsupported platforms
 
     void Awake()
@@ -69,7 +75,10 @@ public class Rewarded : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowListe
         {
             Debug.Log("Unity Ads Rewarded Ad Completed");
             // Grant a reward.
-            GameManager.instance.AddTimer(addedtime);
+            if(FindObjectOfType<GameManager>() != null)
+            {
+                FindObjectOfType<GameManager>().AddTimer(addedtime);
+            }
             
 
             // Load another ad:

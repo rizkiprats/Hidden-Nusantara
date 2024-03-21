@@ -2,39 +2,83 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
 [System.Serializable]
 public class GameDataSave
 {
-    public float timer;
-    public Vector3 playerPosition;
-    public int sceneNumber;
-    public bool isOn;
-    public bool doorOpen;
-    public bool isFollowing;
-    public Vector3 Boxlv3Pos;
-    public Vector3 platelv3Pos;
-    public bool boxpressedlv3;
-    public bool answeredquestion;
-    public bool[] Jurnal;
+    [Header("Timer Saved")]
+    public float timerSaved;
+
+    [Header("Player Position Saved")]
+    public Vector3 playerPositionSaved;
+
+    [Header("Scene Number Saved in Index")]
+    public int sceneNumberSaved;
+
+    [Header("Pressure Plate Active Saved")]
+    public bool isOn_PressurePlateSaved;
+
+    [Header("Door Active Saved")]
+    public bool doorOpenSaved;
+
+    [Header("Following Key Active Saved")]
+    public bool isFollowing_KeySaved;
+
+    [Header("Box Pressure Plate Active And Position Saved")]
+    //public Vector3 boxPressurePlate_PosSaved;
+    public Vector3[] boxPressurePlate_PosSaved;
+    //public bool boxPressurePlate_PressedSaved;
+
+    [Header("Plate Position Saved")]
+    public Vector3 plate_PosSaved;
+
+    [Header("Jurnal Items in Index Active Saved")]
+    public bool[] JurnalItem_EnabledSaved;
+
+    [Header("Level Progress Saved")]
+    public LevelProgress levelProgressSaved;
+
+    [Header("Number of Obtained Items in Level Saved")]
+    public int Obtained_Object_Count_Saved;
+
+    [Header("Camera Saved Position")]
+    public Vector3 cameraPos;
+
+    [Header("Player Point Saved")]
+    public int playerPoint;
+
+    [Header("Player Name Saved")]
+    public string playerName;
 
 
     public GameDataSave()
     {
-        this.isOn = false;
-        this.sceneNumber = 1;
-        this.timer = 60;
-        playerPosition = Vector3.zero;
-        this.doorOpen = false;
-        this.isFollowing = false;
-        this.Boxlv3Pos = Vector3.zero;
-        this.boxpressedlv3 = false;
-        this.platelv3Pos = Vector3.zero;
-        this.answeredquestion = false;
-        this.Jurnal = new bool[3]{
-            false,
-            false,
-            false
-        };
+        this.isOn_PressurePlateSaved = false;
+        
+        this.sceneNumberSaved = 0;
+        
+        this.timerSaved = 60;
+
+        playerPositionSaved = Vector3.zero;
+        
+        this.doorOpenSaved = false;
+        this.isFollowing_KeySaved = false;
+
+        //this.boxPressurePlate_PosSaved = Vector3.zero;
+        this.boxPressurePlate_PosSaved = new Vector3[0];
+        //this.boxPressurePlate_PressedSaved = false;
+        
+        this.plate_PosSaved = Vector3.zero;
+        
+        this.JurnalItem_EnabledSaved = new bool[0];
+
+        this.levelProgressSaved = new LevelProgress();
+
+        this.Obtained_Object_Count_Saved = 0;
+
+        this.cameraPos = Vector3.zero;
+
+        this.playerPoint = 0;
+
+        this.playerName = "";
     }
 }

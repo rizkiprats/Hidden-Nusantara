@@ -2,119 +2,79 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.Events;
 
 public class DialogManager : MonoBehaviour, InterfaceDataSave
 {
     public static DialogManager instance;
-    public Text nameText;
-    public Text dialogText;
-    public GameObject dimmer;
-    public Image karakterImage;
 
+    [Header("Dialog Panel")]
+    public Text nameText;
+    public TMP_Text nameTextTMP;
+    
+    public Text dialogText;
+    public TMP_Text dialogTextTMP;
+
+    [Header("Dialog Dimmer Image")]
+    public GameObject dimmer;
+
+    [Header("Dialog Object Image")]
+    public Image karakterImage;
+    public Image ObjectImage;
+
+    [Header("Dialog Animator")]
     public Animator animator;
 
+    [Header("Dialog Audio")]
+    public AudioSource dialogTypingAudioSource;
+    public AudioSource dialogClipAudioSource;
     private Queue<string> sentences;
+    private Queue<AudioClip> dialogAudioClips;
+    private bool stopDialog;
 
+    [Header("Dialog Panel Skip Button")]
     public GameObject Skipbutton;
-
     private bool skipDialog;
 
-    public GameObject ChoicesPanel;
+    [Header("Define That Dialog Has Ended (Automatic)")]
+    public bool endDialog;
 
-    public GameObject rightPanel;
-    public GameObject wrongPanel;
-    public GameObject wrong2Panel;
+    private UnityEvent endDialogEvent;
+    private bool addJournalEntry;
+    private int dialogJurnalPoint;
 
+    [Header("Character Name")]
+    public TMP_Text characterName;
+    [SerializeField] string playerName;
 
-    public GameObject Textbox;
-    public GameObject Choice1;
-    public GameObject Choice2;
-    public GameObject Choice3;
-
-    public GameObject NextLevel;
-    public Animator doorAnim;
-
-    public float timer;
-
-    public bool answered;
-
-    public int ChoiceMade;
-
-    public bool haveChoices;
     void Awake()
     {
         instance = this;
     }
 
-
-
     // Start is called before the first frame update
     void Start()
     {
-
-
+        dialogTextTMP.alignment = TextAlignmentOptions.TopLeft;
+        if(dialogTypingAudioSource != null)
+        {
+            dialogTypingAudioSource.mute = true;
+        }
         sentences = new Queue<string>();
+        dialogAudioClips = new Queue<AudioClip>();
         skipDialog = false;
 
-        doorAnim = NextLevel.GetComponentInParent<Animator>();
-        haveChoices = false;
-        if (answered)
+        if (DataSaveManager.instance != null)
         {
-            NextLevel.gameObject.SetActive(true);
-            doorAnim = NextLevel.GetComponentInParent<Animator>();
-            doorAnim.SetBool("open", true);
+            DataSaveManager.instance.LoadGame();
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-        timer -= Time.deltaTime;
-        if (Choice1 != null)
-        {
-            haveChoices = true;
-            if (ChoiceMade >= 1)
-            {
-                if (timer <= 1)
-                {
-                    if (answered)
-                    {
-                        rightPanel.SetActive(false);
-                        timer = 0;
-                        doorAnim.SetBool("open", true);
-                    }
-                    else
-                    {
-                        wrong2Panel.SetActive(false);
-                        wrongPanel.SetActive(false);
-                        timer = 0;
-                    }
-
-                }
-            }else if (ChoiceMade >= 0)
-            {
-                if(timer <= 1)
-                {
-                    if (answered)
-                    {
-                        rightPanel.SetActive(false);
-                        timer = 0;
-                        doorAnim.SetBool("open", true);
-                    }
-                }
-            }
-        }
-        if (answered == true)
-        {
-            NextLevel.gameObject.SetActive(true);
-            doorAnim = NextLevel.GetComponentInParent<Animator>();
-            doorAnim.SetBool("open", true);
-        }
+        characterName.text = playerName;
     }
 
     public void StartDialog(Dialog dialog)
-    {
+    { 
         dimmer.SetActive(true);
 
         skipDialog = false;
@@ -124,18 +84,40 @@ public class DialogManager : MonoBehaviour, InterfaceDataSave
         Debug.Log("Starting Conversation from " + dialog.name);
 
         nameText.text = dialog.name;
+        nameTextTMP.text = dialog.name;
 
         karakterImage.sprite = dialog.karakterImage;
 
+        endDialogEvent = dialog.endDialogEvent;
+        addJournalEntry = dialog.getJurnalEntry();
+        dialogJurnalPoint = dialog.getJurnalPoint();
+
+        if(dialog.ObjectImage != null)
+        {
+            ObjectImage.gameObject.SetActive(true);
+            ObjectImage.sprite = dialog.ObjectImage;
+        }
+        else
+        {
+            ObjectImage.gameObject.SetActive(false);
+        }
+
         sentences.Clear();
+        dialogAudioClips.Clear();
 
         foreach (string sentence in dialog.sentences)
         {
             sentences.Enqueue(sentence);
         }
 
+        foreach (AudioClip AudioClipsentense in dialog.AudioClipSentences)
+        {
+            dialogAudioClips.Enqueue(AudioClipsentense);
+        }
+
         DisplayNextSentence();
 
+        endDialog = false;
     }
 
     public void DisplayNextSentence()
@@ -148,114 +130,131 @@ public class DialogManager : MonoBehaviour, InterfaceDataSave
         }
 
         string sentence = sentences.Dequeue();
+        AudioClip AudioClipsentence = dialogAudioClips.Dequeue();
 
-        //Debug.Log(sentence);
-
-        //dialogText.text = sentence;
-        
         StopAllCoroutines();
-        StartCoroutine(TypeSentence(sentence));
+        StartCoroutine(TypeSentence(sentence, AudioClipsentence));
+
+        endDialog = false;
     }
 
-    IEnumerator TypeSentence(string sentence)
+    IEnumerator TypeSentence(string sentence, AudioClip AudioClipsentence)
     {
         skipDialog = false;
+        stopDialog = false;
         dialogText.text = "";
-      
-            foreach (char letter in sentence.ToCharArray())
-            {
-                if (skipDialog)
-                {
-                    dialogText.text += "";
-                }
-                else
-                {
-                dialogText.text += letter;
+        dialogTextTMP.text = "";
 
-                }
-                yield return new WaitForSeconds(0.02f);
-                if (skipDialog)
-                {
+        if (AudioClipsentence != null)
+        {
+            dialogClipAudioSource.clip = AudioClipsentence;
+        }
+
+        foreach (char letter in sentence.ToCharArray())
+        {
+            if (skipDialog)
+            {
+                dialogText.text += "";
+                dialogTextTMP.text += "";
+                dialogClipAudioSource.Stop();
+                dialogTypingAudioSource.Stop();
                 StopAllCoroutines();
                 dialogText.text = sentence;
-                
+                dialogTextTMP.text = sentence;
+            }
+            else
+            {
+                dialogText.text += letter;
+                dialogTextTMP.text += letter;
+                if (stopDialog)
+                    dialogClipAudioSource.Stop();
+                else
+                    dialogClipAudioSource.Play();
+                dialogTypingAudioSource.Play();
+                yield return new WaitForSeconds(0.05f);
+                //Debug.Log(dialogClipAudioSource.time);
+                if (dialogClipAudioSource.time == 0f)
+                {
+                    stopDialog = true;
+                }
+                dialogClipAudioSource.Pause();
+                dialogTypingAudioSource.Pause();
+
+                if (dialogTextTMP.text == sentence || dialogText.text == sentence && stopDialog != true)
+                {
+                    dialogClipAudioSource.Pause();
+                    dialogClipAudioSource.Play();
                 }
             }
-            
+        }
+
+        if (dialogTextTMP.text == sentence || dialogText.text == sentence)
+        {
+            dialogTypingAudioSource.Stop();
+        }
+        
+        if(stopDialog == true)
+        {
+            dialogClipAudioSource.Stop();
+            StopAllCoroutines();
+        }
+
         Skipbutton.SetActive(false);
-
-
     }
 
     void EndDialog()
     {
+       
         Skipbutton.SetActive(false); 
 
         dimmer.SetActive(false);
 
         animator.SetBool("IsOpen", false);
 
-        if (haveChoices)
+        endDialog = true;
+
+        if (addJournalEntry)
         {
-            if (answered)
-            {
-                rightPanel.SetActive(true);
-                timer = 3;
-            }
-            else
-            {
-                ChoicesPanel.SetActive(true);
-            }
+            FindObjectOfType<GameManager>().setJurnalEntry(dialogJurnalPoint);
         }
+
+        endDialogEvent.Invoke();
 
         Debug.Log("End Of Conversation.");
 
+        if (FindObjectOfType<PlayerControllers>() != null)
+            FindObjectOfType<PlayerControllers>().OnEnable();
+
+        Invoke("DisablendDialog", 1);
     }
 
-   public void  SkipDialog()
+    public void DisablendDialog()
     {
-        
+        endDialog = false;
+    }
+
+    public void SkipDialog()
+    {
         skipDialog = true;
         Skipbutton.SetActive(false);
-
     }
 
-    public void ChoiceOption1()
-    { 
-        rightPanel.SetActive(true);
-        ChoicesPanel.SetActive(false);
-        timer = 3;
-        ChoiceMade = 1;
-        answered = true;
-        DataSaveManager.instance.SaveGame();
-
-        NextLevel.gameObject.SetActive(true);
-        doorAnim.SetBool("open", true);
-    }
-    public void ChoiceOption2()
+    public void OnGamePause()
     {
-        ChoiceMade = 2;
-        wrongPanel.SetActive(true);
-        ChoicesPanel.SetActive(false);
-        timer = 3;
-    }
-    public void ChoiceOption3()
-    {
-        ChoiceMade = 3;
-        wrong2Panel.SetActive(true);
-        ChoicesPanel.SetActive(false);
-        timer = 3;
+        dialogClipAudioSource.Pause();
+        dialogTypingAudioSource.Pause();
     }
 
     public void LoadData(GameDataSave data)
     {
-        this.answered = data.answeredquestion;
+        if(data != null)
+        {
+            playerName = data.playerName;
+        }
     }
 
     public void SaveData(ref GameDataSave data)
     {
-        data.answeredquestion = this.answered;
+
     }
-
 }
-
